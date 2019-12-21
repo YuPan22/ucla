@@ -1,0 +1,4 @@
+include Readme.md
+include config/*
+include deidentify/*
+include shellscript/*
