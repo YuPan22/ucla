@@ -6,7 +6,7 @@ import logging
 
 from deidentify.deidentifier import Deidentifier
 
-class SingleFilePorcessor():
+class SingleFileProcessor():
     def __init__(self, dob, mask, debug_yn=True):
         self.debug_yn = debug_yn
         self.dob = dob

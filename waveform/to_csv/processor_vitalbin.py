@@ -26,11 +26,11 @@ import datetime
 
 from vitalfilepy import VitalFile
 from deidentify.deidentifier import Deidentifier
-from to_csv.single_file_processor import SingleFilePorcessor
+from to_csv.single_file_processor import SingleFileProcessor
 
 
 
-class ProcessorVitalbin(SingleFilePorcessor):
+class ProcessorVitalbin(SingleFileProcessor):
     def get_begin_time(self, input_file):
         #print("!!!!!!!!!!!!!!!!!!!", input_file, os.path.basename(input_file).split('.')[0].split('_')[1])
         #begin_time_str = os.path.basename(input_file).split('.')[0].split('_')[1]

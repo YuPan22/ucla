@@ -97,7 +97,7 @@ class Job():
         First create the deidentification dictionary,
         then process all files inside a folder
         """
-        #print(self.config_dict.get('azure_storage_account'))
+        #logging.info(self.config_dict.get('azure_storage_account'))
 
         de_id_ins = Deidentifier()
         logging.debug(de_id_ins.dict)
@@ -115,7 +115,7 @@ if __name__ == '__main__':
     parser.add_argument('-output', action="store", dest="output_folder_path")
     parser.add_argument('-bp', action="store", dest="binfilepy_path")
     args = parser.parse_args()
-    print(args)
+    logging.info(args)
 
     Job(input_folder_path=args.input_folder_path, output_folder_path=args.output_folder_path, binfilepy_path=args.binfilepy_path, type=args.type, debug_yn=args.debug).run()
 

@@ -12,9 +12,9 @@ import sys
 #from binfilepy import binfile
 
 from deidentify.deidentifier import Deidentifier
-from to_csv.single_file_processor import SingleFilePorcessor
+from to_csv.single_file_processor import SingleFileProcessor
 
-class ProcessorAdibin(SingleFilePorcessor):
+class ProcessorAdibin(SingleFileProcessor):
 
     def __init__(self, dob, mask, binfilepy_path, debug_yn=True):
         super().__init__(dob, mask, debug_yn)

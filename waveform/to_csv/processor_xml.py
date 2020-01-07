@@ -4,9 +4,9 @@ import logging
 import xml.etree.ElementTree as ET
 
 from deidentify.deidentifier import Deidentifier
-from to_csv.single_file_processor import SingleFilePorcessor
+from to_csv.single_file_processor import SingleFileProcessor
 
-class ProcessorXml(SingleFilePorcessor):
+class ProcessorXml(SingleFileProcessor):
     def f(self, x):
         if x is None:
             return ""

@@ -84,3 +84,6 @@ ssh yup1@lapgnomap15
 conda activate edwards  
 cd waveform  
 ./shellscript/parallel_runner.sh  
+
+##7. generate data catalog for the output adibin.csv files.  
+./shellscript/create_waveform_catalog.sh /home2/yup1/CsvOutputs $(pwd)/waveform_catalog.txt
