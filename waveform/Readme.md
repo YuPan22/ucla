@@ -47,17 +47,15 @@ but we only convert alarms since waveforms and vitals are converted from binary 
 
 
 
+# How to setup Linux VM and run the code there   
+## 1. ssh-gen rsa keys, setup .ssh/authorized_keys, this enable ssh wo password and scp.  
 
-
-# How to setup Linux VM and run the code there  
-##1. ssh-gen rsa keys, setup .ssh/authorized_keys, this enable ssh wo password and scp.  
-
-##2. scp codes to vm. The codes are not very mature yet and probably need changes. 
+## 2. scp codes to vm. The codes are not very mature yet and probably need changes.   
 That is why I don't want to update every change through PyPI.  
 
-##3. ask Vivek to install anaconda, pip, screen. 
+## 3. ask Vivek to install anaconda, pip, screen.  
  
-##4. create a conda env, libraries are only allowed to be installed in conda env in the T1 VMs  
+## 4. create a conda env, libraries are only allowed to be installed in conda env in the T1 VMs  
 conda create -n edwards -y Python=3.7  
 conda init bash  
 conda activate edwards  
@@ -67,7 +65,7 @@ You can just install the dependencies by
 pip install -r requirements.txt # This has to be done in a new conda env, because I don't have permission to change existing installed libraries.  
 ```
 
-##5. call the code as below  
+## 5. call the code as below  
 To test on my mac
 python \_\_main\_\_.py \  
 -input "/Users/yp/Google Drive/think for mac/ucla_health/test_data/input/WaveFormProcessedFiles" -output "/Users/yp/Google Drive/think for mac/ucla_health/test_data/output" -type "toCsv" -bp "/Users/yp/Google Drive/think for mac/ucla_health/binfilepy_git"
@@ -79,11 +77,11 @@ To test on lapgnomap15
 python __main__.py -input "/home2/yup1/WaveFormProcessedFiles/CLIN_ENG_WMOR8/CLIN_ENG_WMOR8-1563486442/ADIBIN" -output "/opt/genomics/WaveFormProcessedFiles/CsvOutputs" -type "toCsv" -bp "/home2/yup1/binfilepy_git"  
 python __main__.py -input "/home2/yup1/WaveFormProcessedFiles/CLIN_ENG_WMOR8/CLIN_ENG_WMOR8-1563486442/XML" -output "/opt/genomics/WaveFormProcessedFiles/CsvOutputs" -type "deidXml"   
 
-##6. parallel computing in linux vm  
+## 6. parallel computing in linux vm  
 ssh yup1@lapgnomap15  
 conda activate edwards  
 cd waveform  
 ./shellscript/parallel_runner.sh  
 
-##7. generate data catalog for the output adibin.csv files.  
+## 7. generate data catalog for the output adibin.csv files.  
 ./shellscript/create_waveform_catalog.sh /home2/yup1/CsvOutputs $(pwd)/waveform_catalog.txt
