@@ -49,7 +49,7 @@ but we only convert alarms since waveforms and vitals are converted from binary 
 
 
 
-# How to setup Linux VM and run the code there
+# How to setup Linux VM and run the code there  
 ##1. ssh-gen rsa keys, setup .ssh/authorized_keys, this enable ssh wo password and scp.  
 
 ##2. scp codes to vm. The codes are not very mature yet and probably need changes. 
