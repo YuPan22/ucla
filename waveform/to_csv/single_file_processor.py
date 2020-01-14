@@ -29,23 +29,26 @@ class SingleFileProcessor():
         def replace(match):
             return "_"+Deidentifier.get_sequence(match.group()[1:], self.dob, self.mask)+"~"
         tmp = pattern.sub(replace, filename)
-        return re.sub('-\d{10}_', '-', tmp)
+        #return re.sub('-\d{10}_', '-', tmp) #10 digits is UTC timestamp, which should be removed
+        return tmp
 
 
     def get_csv_name(self, input_file, output_path, filename):
         stp_filename = os.path.basename(input_file)
 
         study_id = Deidentifier.query_dictionary(stp_filename, field="studyid")
-        encounterid = Deidentifier.query_dictionary(stp_filename, field="encounterid")
+        encounter_id = Deidentifier.query_dictionary(stp_filename, field="encounterid")
 
-        new_output_path = os.path.join(output_path, study_id)
+        new_output_path = os.path.join(output_path, study_id, encounter_id)
         if not os.path.exists(new_output_path):
-            os.makedirs(new_output_path)
+            os.makedirs(new_output_path)  #this equals to mkdir -p
 
         if ".xml" in filename:
             filename = filename.replace(".xml", ".alarm")
 
-        final_output_filename = os.path.join(new_output_path, study_id + "_" + encounterid + "_" + self.deidentified_filename_with_sequence(filename) + ".csv")
+        #filename = filename.split("-")[1]
+
+        final_output_filename = os.path.join(new_output_path, study_id + "_" + encounter_id + "_" + self.deidentified_filename_with_sequence(filename) + ".csv")
 
         return final_output_filename
 
