@@ -7,7 +7,7 @@
 COMMENT
 
 
-# Usage: ./create_waveform_catalog.sh "/opt/genomics/WaveFormProcessedFiles/codes/CsvOutputs_test" $(pwd)/waveform_catalog_test.txt "/opt/genomics/WaveFormProcessedFiles/codes/WaveFormProcessedFiles_2_stps"
+# Usage: ./create_waveform_catalog.sh "/opt/genomics/WaveFormProcessedFiles/codes/CsvOutputs_co2_v2" $(pwd)/waveform_catalog_v2.txt "/opt/genomics/WaveFormProcessedFiles/codes/WaveFormProcessedFiles_2_stps"
 
 csvs_dir="$1"
 
@@ -81,7 +81,7 @@ for csv_file_path in glob.iglob("$csvs_dir"+'/**', recursive=True):
         csv_filename = os.path.basename(csv_file_path)
         sp = csv_filename.split("-")
         head = "_".join(sp[0].split("_")[:2])
-        tail = "_".join(sp[1].split("_")[1:])
+        tail = "_".join(("-".join(sp[1:])).split("_")[1:])
         new_csv_filename = f"{head}-{tail}"
         new_csv_path = os.path.join(os.path.dirname(csv_file_path), new_csv_filename)
         os.rename(csv_file_path, new_csv_path)
