@@ -85,3 +85,5 @@ cd waveform
 
 ## 7. generate data catalog for the output adibin.csv files.  
 ./shellscript/create_waveform_catalog.sh /home2/yup1/CsvOutputs $(pwd)/waveform_catalog.txt
+
+

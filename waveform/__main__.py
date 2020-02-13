@@ -20,6 +20,9 @@ from to_csv.processor_xml import ProcessorXml
 from deidentify.deidentifier import Deidentifier
 from deidentify import deidentify_xml
 
+from upmc.xml_to_csv import UPMC
+
+
 class Job():
     def __init__(self, input_folder_path, output_folder_path, binfilepy_path, config_section='Test Env', type="toCsv", debug_yn=True):
         self.debug_yn = debug_yn
@@ -83,9 +86,11 @@ class Job():
                         '''
                     else:
                         if '.xml' in file:
-                            deidentify_xml.deidentify_xml(input_file_path, file, self.output_folder_path, adob, amask)
+                            #deidentify_xml.deidentify_xml(input_file_path, file, self.output_folder_path, adob, amask)
+                            up = UPMC(256)
+                            up.xml_to_csv(input_file_path, file, self.output_folder_path, adob, amask)
 
-                    elapsed_time = time.time() - start_time
+                elapsed_time = time.time() - start_time
                     logging.info(f"Done processing: {input_file_path}, elapsed_time: {elapsed_time}, seconds \n")
                 except Exception:
                     logging.error("Exception occurred", exc_info=True)
