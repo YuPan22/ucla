@@ -87,10 +87,13 @@ class Job():
                     else:
                         if '.xml' in file:
                             #deidentify_xml.deidentify_xml(input_file_path, file, self.output_folder_path, adob, amask)
-                            up = UPMC(256)
-                            up.xml_to_csv(input_file_path, file, self.output_folder_path, adob, amask)
+                            #up = UPMC(256)
+                            up = UPMC()
+                            up.xml_to_csv_waveforms(input_file_path, file, self.output_folder_path, adob, amask)
+                            #up.xml_to_csv_vitals(input_file_path, file, self.output_folder_path, adob, amask)
+                            #up.xml_to_csv_alarms(input_file_path, file, self.output_folder_path, adob, amask)
 
-                elapsed_time = time.time() - start_time
+                    elapsed_time = time.time() - start_time
                     logging.info(f"Done processing: {input_file_path}, elapsed_time: {elapsed_time}, seconds \n")
                 except Exception:
                     logging.error("Exception occurred", exc_info=True)
@@ -126,5 +129,4 @@ if __name__ == '__main__':
 
     end = time.time()
     logging.info(f"__main__ runtime: {end - start}")
-
-
+    
