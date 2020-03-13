@@ -81,19 +81,22 @@ class UPMC:
             for waveform_per_sec in segment.findall("Waveforms"):
                 ct += 1
                 dfs_per_sec = {}
+                #print(f'!!!!!!!!!!!!!!!!!!!!!!!ct: {ct}')
+                #if ct >= 4:
+                #    break
+
                 for waveform_per_channel in waveform_per_sec.findall("WaveformData"):
 
                     sample_rate = int(waveform_per_channel.attrib['SampleRate'])
                     #print(f'sample_rate: {sample_rate}, ct: {ct}')
 
-                    col = f'{waveform_per_channel.attrib["Label"]}(UOM={waveform_per_channel.attrib["UOM"]} Cal={waveform_per_channel.attrib["Cal"]})'
+                    #col = f'{waveform_per_channel.attrib["Label"]}(UOM={waveform_per_channel.attrib["UOM"]} Cal={waveform_per_channel.attrib["Cal"].replace(",",";")})'
+                    col = f'{waveform_per_channel.attrib["Label"]}'
+                    sp = waveform_per_channel.text.split(',')
 
                     if sample_rate not in dfs_per_sec:
-                        sp = waveform_per_channel.text.split(',')
-                        #print("$$$$$$$$$$$$$$$$$$", len(sp))
                         dfs_per_sec[sample_rate] = pd.DataFrame(sp, columns=[col])
                     else:
-                        sp = waveform_per_channel.text.split(',')
                         dfs_per_sec[sample_rate][col] = sp
                         #print("=================", waveform_per_channel.attrib['Label'], waveform_per_channel.text.split(','), len(waveform_per_channel.text.split(',')))
 
@@ -109,9 +112,9 @@ class UPMC:
                     if sample_rate not in dfs:
                         dfs[sample_rate] = []
 
+                for sample_rate in dfs_per_sec.keys():
                     dfs[sample_rate].append(dfs_per_sec[sample_rate])
 
-            #break
         end_append = time.time()
         print(f"append runtime: {end_append - start_append}")
 
@@ -147,7 +150,7 @@ class UPMC:
 
                     # print(df_cleaned)
                     # print(len(df_cleaned))
-                    output_file = output_file_path + "/"+input_file.replace(" ", "_").replace(".xml","") + "_Waveforms_" + str(sample_rate)+".csv"
+                    output_file = output_file_path + "/"+input_file.replace(" ", "_").replace(".xml","") + "_Waveforms_" + str(sample_rate)+".csv2"
                     print(f'writing to {output_file}')
 
                     start_to_csv = time.time()
