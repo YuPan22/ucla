@@ -6,8 +6,8 @@ class Deidentifier():
     dict = {}
 
     def __init__(self):
-        #self.create_dictionary()
-        self.create_dictionary_edwards_one_month()
+        self.create_dictionary()
+        #self.create_dictionary_edwards_one_month()
 
     @staticmethod
     def days_between(day1, day2):
@@ -40,7 +40,8 @@ class Deidentifier():
 
     def create_dictionary(self):
         #for _, row in pandas.read_csv(os.path.join(os.path.abspath(os.path.dirname(__file__)), 'deidentify', 'deidentify.csv')).iterrows():
-        for _, row in pandas.read_csv(os.path.join(os.path.abspath(os.path.dirname(__file__)), 'deidentify.csv')).iterrows():
+        #for _, row in pandas.read_csv(os.path.join(os.path.abspath(os.path.dirname(__file__)), 'deidentify.csv')).iterrows():
+        for _, row in pandas.read_csv(os.path.join(os.path.abspath(os.path.dirname(__file__)), 'deidentify_upmc.csv')).iterrows():
             Deidentifier.dict[row['stpfilename'].strip().replace(' ','_').split('.')[0]] = {'DateofBirth': row['DateofBirth'], 'BaseDateNumber': row['BaseDateNumber'], 'studyid': str(row['studyid']), 'encounterid': str(row['encounterid'])}
 
     def create_dictionary_edwards_one_month(self):

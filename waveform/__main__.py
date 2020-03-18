@@ -90,8 +90,8 @@ class Job():
                             #up = UPMC(256)
                             up = UPMC()
                             up.xml_to_csv_waveforms(input_file_path, file, self.output_folder_path, adob, amask)
-                            #up.xml_to_csv_vitals(input_file_path, file, self.output_folder_path, adob, amask)
-                            #up.xml_to_csv_alarms(input_file_path, file, self.output_folder_path, adob, amask)
+                            up.xml_to_csv_vitals(input_file_path, file, self.output_folder_path, adob, amask)
+                            up.xml_to_csv_alarms(input_file_path, file, self.output_folder_path, adob, amask)
 
                     elapsed_time = time.time() - start_time
                     logging.info(f"Done processing: {input_file_path}, elapsed_time: {elapsed_time}, seconds \n")
@@ -129,4 +129,4 @@ if __name__ == '__main__':
 
     end = time.time()
     logging.info(f"__main__ runtime: {end - start}")
-    
+
