@@ -130,3 +130,4 @@ if __name__ == '__main__':
     end = time.time()
     logging.info(f"__main__ runtime: {end - start}")
 
+    print("just a test")
