@@ -2,6 +2,7 @@ import os
 import re
 import time
 import pandas as pd
+from pandas import HDFStore
 import logging
 
 from deidentify.deidentifier import Deidentifier
@@ -33,7 +34,7 @@ class SingleFileProcessor():
         return tmp
 
 
-    def get_csv_name(self, input_file, output_path, filename):
+    def get_output_file_name(self, input_file, output_path, filename, ext):
         stp_filename = os.path.basename(input_file)
 
         study_id = Deidentifier.query_dictionary(stp_filename, field="studyid")
@@ -48,7 +49,7 @@ class SingleFileProcessor():
 
         #filename = filename.split("-")[1]
 
-        final_output_filename = os.path.join(new_output_path, study_id + "_" + encounter_id + "_" + self.deidentified_filename_with_sequence(filename) + ".csv")
+        final_output_filename = os.path.join(new_output_path, study_id + "_" + encounter_id + "_" + self.deidentified_filename_with_sequence(filename) + "." + ext)
 
         return final_output_filename
 
@@ -57,7 +58,7 @@ class SingleFileProcessor():
 
         start_time = time.time()
 
-        final_output_filename = self.get_csv_name(input_file, output_path, filename)
+        final_output_filename = self.get_output_file_name(input_file, output_path, filename, "csv")
         logging.debug(f"Writing into {final_output_filename}")
 
         df.to_csv(final_output_filename, index=False)
@@ -66,10 +67,24 @@ class SingleFileProcessor():
         elapsed_time = time.time() - start_time
         logging.debug(f"SingleFilePorcessor.dataframe_to_csv elapsed_time: {elapsed_time}")
 
+    def dataframe_to_hdf5(self, df, input_file, output_path, filename, header_yn=True):
+
+        start_time = time.time()
+
+        final_output_filename = self.get_output_file_name(input_file, output_path, filename, "h5")
+        logging.debug(f"Writing into {final_output_filename}")
+
+        store = HDFStore(final_output_filename)
+        store.put('dataset', df, format='table', data_columns=True)
+
+        elapsed_time = time.time() - start_time
+        logging.debug(f"SingleFilePorcessor.dataframe_to_csv elapsed_time: {elapsed_time}")
+
+
     def rows_to_csv(self, rows, input_file, output_path, filename):
         start_time = time.time()
 
-        final_output_filename = self.get_csv_name(input_file, output_path, filename)
+        final_output_filename = self.get_output_file_name(input_file, output_path, filename, "csv")
         logging.debug(f"Writing into {final_output_filename}")
 
         with open(final_output_filename, 'w', encoding='utf-8') as f:

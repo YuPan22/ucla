@@ -89,7 +89,7 @@ class Job():
                             #deidentify_xml.deidentify_xml(input_file_path, file, self.output_folder_path, adob, amask)
                             #up = UPMC(256)
                             up = UPMC()
-                            up.xml_to_csv_waveforms(input_file_path, file, self.output_folder_path, adob, amask)
+                            up.xml_to_csv_waveforms_pandas(input_file_path, file, self.output_folder_path, adob, amask)
                             up.xml_to_csv_vitals(input_file_path, file, self.output_folder_path, adob, amask)
                             up.xml_to_csv_alarms(input_file_path, file, self.output_folder_path, adob, amask)
 
@@ -129,4 +129,3 @@ if __name__ == '__main__':
 
     end = time.time()
     logging.info(f"__main__ runtime: {end - start}")
-
