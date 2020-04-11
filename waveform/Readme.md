@@ -87,3 +87,4 @@ cd waveform
 ./shellscript/create_waveform_catalog.sh /home2/yup1/CsvOutputs $(pwd)/waveform_catalog.txt
 
 test
+test2
