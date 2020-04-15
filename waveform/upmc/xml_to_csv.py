@@ -2,6 +2,7 @@ import time
 import datetime
 from datetime import timedelta
 import pandas as pd
+from pandas import HDFStore
 import numpy as np
 import logging
 import xml.etree.ElementTree as ET
@@ -69,13 +70,19 @@ class UPMC:
                             dt += datetime.timedelta(microseconds=1024) #milliseconds
                             fow.write(sequence+","+dt.strftime('%H:%M:%S.%f')+","+ ",".join([str(x) for x in row]) + "\n")
 
-    def get_xml_prefix(self, input_file):
-        return input_file.replace(" ", "_").replace(".xml","") 
+    def get_xml_prefix(self, input_file, dob, mask):
+        #return input_file.replace(" ", "_").replace(".xml","")
+        utc = input_file.split("-")[1].split("_")[0]
+        d = datetime.datetime.utcfromtimestamp(int(utc))
+        sequence = Deidentifier.get_sequence(str(d.date()), dob, mask)
+        t = str(d.time())
+        ret = input_file.replace(utc, f'{sequence}:{t}').replace(" ", "_").replace(".xml","")
+        return ret
 
     def get_modified_output_path(self, xml_prefix, output_file_path):
-        new_output_file_path = os.path.join(output_file_path, xml_prefix) 
-        if not os.path.exists(new_output_file_path): 
-            os.makedirs(new_output_file_path)  #this equals to mkdir -p 
+        new_output_file_path = os.path.join(output_file_path, xml_prefix)
+        if not os.path.exists(new_output_file_path):
+            os.makedirs(new_output_file_path)  #this equals to mkdir -p
         return new_output_file_path
 
     def xml_to_csv_waveforms_pandas(self, input_path, input_file, output_file_path, dob, mask):
@@ -120,7 +127,7 @@ class UPMC:
 
                     if sample_rate not in dfs:
                         dfs[sample_rate] = []
-                
+
                 for sample_rate in dfs_per_sec.keys():
                     dfs[sample_rate].append(dfs_per_sec[sample_rate])
 
@@ -160,14 +167,19 @@ class UPMC:
                     # print(df_cleaned)
                     # print(len(df_cleaned))
 
-                    xml_prefix = self.get_xml_prefix(input_file)
+                    ext = "csv"
+                    #ext = "h5"
+                    xml_prefix = self.get_xml_prefix(input_file, dob, mask)
                     #output_file = output_file_path + "/"+input_file.replace(" ", "_").replace(".xml","") + "_Waveforms_" + str(sample_rate)+".csv2"
-                    output_file = os.path.join(self.get_modified_output_path(xml_prefix, output_file_path), xml_prefix + "_Waveforms_" + str(sample_rate)+".csv")
+                    output_file = os.path.join(self.get_modified_output_path(xml_prefix, output_file_path), xml_prefix + "_Waveforms_" + str(sample_rate)+"."+ext)
                     print(f'writing to {output_file}')
 
                     start_to_csv = time.time()
 
                     df_cleaned.to_csv(output_file, index=False)
+
+                    #store = HDFStore(output_file)
+                    #store.put('dataset', df_cleaned, format='table', data_columns=True)
 
                     end_to_csv = time.time()
                     print(f"to_csv runtime - sample_rate {sample_rate}: {end_to_csv - start_to_csv}")
@@ -208,10 +220,10 @@ class UPMC:
                         vss[channel] = []
                     vss[channel].append(",".join([sequence, ctime, self.f(vitalsign[4].text), self.f(vitalsign[5].text), self.f(vitalsign[6].text), self.f(vitalsign[4].attrib['UOM'])]))
 
-        xml_prefix = self.get_xml_prefix(input_file)
+        xml_prefix = self.get_xml_prefix(input_file, dob, mask)
         for channel, arr in vss.items():
             #output_file = output_file_path + "/" + input_file.replace(" ", "_").replace(".xml", "") + "_VitalSigns_" + channel + ".csv"
-            output_file = os.path.join(self.get_modified_output_path(xml_prefix, output_file_path), xml_prefix + "_VitalSigns_" + channel + ".csv") 
+            output_file = os.path.join(self.get_modified_output_path(xml_prefix, output_file_path), xml_prefix + "_VitalSigns_" + channel + ".csv")
             with open(output_file, "w") as fov:
                 fov.write("Sequence,CollectionTime,Value,AlarmLimitLow,AlarmLimitHigh,UOM\n")
                 for row in arr:
@@ -235,7 +247,7 @@ class UPMC:
                                           self.get_cdate_and_ctime(self.f(alarm[3].text),True), self.get_cdate_and_ctime(self.f(alarm[5].text),True), self.get_cdate_and_ctime(self.f(alarm[7].text),True), \
                                           self.f(alarm[9].attrib['Level']), self.f(alarm[9].text), self.f(alarm[10].attrib['Level']), self.f(alarm[10].text)]))
 
-        xml_prefix = self.get_xml_prefix(input_file)        
+        xml_prefix = self.get_xml_prefix(input_file, dob, mask)
         #output_file = output_file_path + "/" + input_file.replace(" ", "_").replace(".xml", "") + "_Alarms.csv"
         output_file = os.path.join(self.get_modified_output_path(xml_prefix, output_file_path), xml_prefix + "_Alarms.csv")
         with open(output_file, "w") as foa:
@@ -255,4 +267,3 @@ if __name__ == '__main__':
     print(f"__main__ runtime: {end - start}")
 
 # python __main__.py -input "/opt/genomics/WaveFormProcessedFiles/CLIN_ENG_WCATHL4/CLIN_ENG_WCATHL4-1567611924/XML" -output "/opt/genomics/WaveFormProcessedFiles/codes/upmc" -type "deidXml"
-
