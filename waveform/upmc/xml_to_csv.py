@@ -79,8 +79,16 @@ class UPMC:
         ret = input_file.replace(utc, f'{sequence}:{t}').replace(" ", "_").replace(".xml","")
         return ret
 
-    def get_modified_output_path(self, xml_prefix, output_file_path):
-        new_output_file_path = os.path.join(output_file_path, xml_prefix)
+    def get_modified_output_path(self, input_file, xml_prefix, output_file_path):
+
+        stp_filename = os.path.basename(input_file)
+
+        study_id = Deidentifier.query_dictionary(stp_filename, field="studyid")
+        encounter_id = Deidentifier.query_dictionary(stp_filename, field="encounterid")
+
+        new_output_base = os.path.join(output_file_path, study_id, encounter_id)
+
+        new_output_file_path = os.path.join(new_output_base, xml_prefix)
         if not os.path.exists(new_output_file_path):
             os.makedirs(new_output_file_path)  #this equals to mkdir -p
         return new_output_file_path
@@ -171,7 +179,7 @@ class UPMC:
                     #ext = "h5"
                     xml_prefix = self.get_xml_prefix(input_file, dob, mask)
                     #output_file = output_file_path + "/"+input_file.replace(" ", "_").replace(".xml","") + "_Waveforms_" + str(sample_rate)+".csv2"
-                    output_file = os.path.join(self.get_modified_output_path(xml_prefix, output_file_path), xml_prefix + "_Waveforms_" + str(sample_rate)+"."+ext)
+                    output_file = os.path.join(self.get_modified_output_path(input_file, xml_prefix, output_file_path), xml_prefix + "_Waveforms_" + str(sample_rate)+"."+ext)
                     print(f'writing to {output_file}')
 
                     start_to_csv = time.time()
@@ -223,7 +231,7 @@ class UPMC:
         xml_prefix = self.get_xml_prefix(input_file, dob, mask)
         for channel, arr in vss.items():
             #output_file = output_file_path + "/" + input_file.replace(" ", "_").replace(".xml", "") + "_VitalSigns_" + channel + ".csv"
-            output_file = os.path.join(self.get_modified_output_path(xml_prefix, output_file_path), xml_prefix + "_VitalSigns_" + channel + ".csv")
+            output_file = os.path.join(self.get_modified_output_path(input_file, xml_prefix, output_file_path), xml_prefix + "_VitalSigns_" + channel + ".csv")
             with open(output_file, "w") as fov:
                 fov.write("Sequence,CollectionTime,Value,AlarmLimitLow,AlarmLimitHigh,UOM\n")
                 for row in arr:
@@ -249,7 +257,7 @@ class UPMC:
 
         xml_prefix = self.get_xml_prefix(input_file, dob, mask)
         #output_file = output_file_path + "/" + input_file.replace(" ", "_").replace(".xml", "") + "_Alarms.csv"
-        output_file = os.path.join(self.get_modified_output_path(xml_prefix, output_file_path), xml_prefix + "_Alarms.csv")
+        output_file = os.path.join(self.get_modified_output_path(input_file, xml_prefix, output_file_path), xml_prefix + "_Alarms.csv")
         with open(output_file, "w") as foa:
             foa.write("Sequence,CollectionTime,Message,ID,Level,StartTime,SilenceTime,EndTime,KindLevel,KindText,SeverityLevel,SeverityText\n")
             for row in msgs:

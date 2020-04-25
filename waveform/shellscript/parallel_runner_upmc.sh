@@ -8,15 +8,15 @@ job_type="deidXml"
 #input_path="/opt/genomics/WaveFormProcessedFiles"
 #input_path="/home2/yup1/WaveFormProcessedFiles_2_stps"
 #input_path="/opt/genomics/WaveFormProcessedFiles/codes/WaveFormProcessedFiles_2_stps"
-input_path="/opt/genomics/WaveFormProcessedFiles/8ICU_W8445"
+input_path="/opt/genomics/WaveFormProcessedFiles"
 
 #output_path="/opt/genomics/WaveFormProcessedFiles/CsvOutputs"
 #output_path="/home2/yup1/CsvOutputs"
 #output_path="/opt/genomics/WaveFormProcessedFiles/codes/CsvOutputs"
-output_path="/opt/genomics/WaveFormProcessedFiles/codes/upmc"
+output_path="/opt/genomics/WaveFormProcessedFiles/codes/upmc3"
 
 index=0
-max_jobs=2 # the total number of jobs should NOT be less than max_jobs-1, if you have a single job, max_jobs=2, otherwise, the run will hang forever.
+max_jobs=7 # the total number of jobs should NOT be less than max_jobs-1, if you have a single job, max_jobs=2, otherwise, the run will hang forever.
 # lapgnomap15 and lapgnomap16 each has 8 vcores.
 
 #code_path="/home2/yup1/waveform"
@@ -46,7 +46,8 @@ trap add_next_job CHLD
 # execute add_next_job when we receive a child complete signal
 
 #todo_array=($(find $input_path -name "*ENG_*-*" -type d))
-todo_array=($(find $input_path -name "XML" -type d))
+todo_array=($(find $input_path -type d -name "8ICU_W*-*" -o -type d -name "7ICU_W*-*" -o -type d -name "7N_W*-*"))
+#todo_array=($(find $input_path -type d -name "7CCU_W*-*" -o -type d -name "7W_W*-*"))
 
 function do_job {
     echo "starting job $1"
