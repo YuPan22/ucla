@@ -31,6 +31,19 @@ from to_csv.single_file_processor import SingleFileProcessor
 
 
 class ProcessorVitalbin(SingleFileProcessor):
+    def get_original_begin_time(self, input_file):
+        def get_timestamp(filename):
+            matched = re.search('-\d{10}_', filename)
+            if matched != None:
+                return matched.group()[1:-1]
+
+        logging.debug(f'==============os.path.basename(input_file): {os.path.basename(input_file)}')
+        unix_epoch_time_str = get_timestamp(os.path.basename(input_file))
+        logging.debug(f'unix_epoch_time_str: {unix_epoch_time_str}')
+        begin_time = datetime.datetime.fromtimestamp(int(unix_epoch_time_str))
+        logging.debug(f"original begin_time in vital: {begin_time}")
+        return begin_time
+
     def get_begin_time(self, input_file):
         #print("!!!!!!!!!!!!!!!!!!!", input_file, os.path.basename(input_file).split('.')[0].split('_')[1])
         #begin_time_str = os.path.basename(input_file).split('.')[0].split('_')[1]
@@ -50,7 +63,8 @@ class ProcessorVitalbin(SingleFileProcessor):
 
         start_time = time.time()
 
-        begin_time = self.get_begin_time(input_file)
+        #begin_time = self.get_begin_time(input_file)
+        begin_time = self.get_original_begin_time(input_file)
 
         data = []
         uom = ''

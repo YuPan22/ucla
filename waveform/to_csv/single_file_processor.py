@@ -45,7 +45,7 @@ class SingleFileProcessor():
             os.makedirs(new_output_path)  #this equals to mkdir -p
 
         if ".xml" in filename:
-            filename = filename.replace(".xml", ".alarm")
+            filename = filename.replace(".xml", ".alarm").replace(" ", "_")
 
         #filename = filename.split("-")[1]
 
