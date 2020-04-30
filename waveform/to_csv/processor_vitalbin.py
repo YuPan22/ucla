@@ -17,6 +17,7 @@ I need to change sequence and collectiontime accordingly.
 '''
 
 import os
+import glob
 import re
 import time
 import logging
@@ -31,6 +32,22 @@ from to_csv.single_file_processor import SingleFileProcessor
 
 
 class ProcessorVitalbin(SingleFileProcessor):
+    def get_original_begin_time_from_xml(self, input_file):
+        xml_path = os.path.join(os.path.dirname(os.path.dirname(input_file)), "XML", "*_0_wf.xml")
+        xmls = list(glob.iglob(xml_path, recursive=True))
+        if len(xmls) != 1:
+            raise Exception("the count of *_0_wf.xml !=1, fails to get vital begin time to fix vital shifting issue")
+        begin_time_str = ''
+        with open(xmls[0]) as xml:
+            line = xml.readline()
+            while line:
+                if "<Time>" in line:
+                    begin_time_str = line.split("<Time>")[1].split("</Time>")[0]
+                    break
+                line = xml.readline()
+        begin_time = datetime.datetime.strptime(begin_time_str, '%m/%d/%Y %I:%M:%S %p')
+        return begin_time
+
     def get_original_begin_time(self, input_file):
         def get_timestamp(filename):
             matched = re.search('-\d{10}_', filename)
@@ -64,7 +81,8 @@ class ProcessorVitalbin(SingleFileProcessor):
         start_time = time.time()
 
         #begin_time = self.get_begin_time(input_file)
-        begin_time = self.get_original_begin_time(input_file)
+        #begin_time = self.get_original_begin_time(input_file)
+        begin_time = self.get_original_begin_time_from_xml(input_file)
 
         data = []
         uom = ''
