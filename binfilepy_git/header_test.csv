@@ -1,0 +1,9 @@
+Title,Units,scale,offset,RangeHigh,RangeLow
+II,mV,0.1,0.0,0.0,100.0
+V1,mV,0.1,0.0,0.0,100.0
+Pleth,mV,0.1,0.0,0.0,1.0
+Resp,Ohm,1.0,0.0,0.0,100.0
+I,mV,0.1,0.0,0.0,100.0
+III,mV,0.1,0.0,0.0,100.0
+aVR,mV,0.1,0.0,0.0,100.0
+aVL,mV,0.1,0.0,0.0,100.0
