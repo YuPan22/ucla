@@ -1,18 +1,23 @@
 #! /bin/bash
+source $(conda info --base)/etc/profile.d/conda.sh
+conda activate edwards
+
 # https://stackoverflow.com/questions/6593531/running-a-limited-number-of-child-processes-in-parallel-in-bash
 # for p in `ps aux | grep wc | grep -v grep | awk '{print $2}'`; do kill -9 $p; done
 
 job_type="toCsv"
 #job_type="deidXml"
 
-input_path="/opt/genomics/WaveFormProcessedFiles"
+#input_path="/opt/genomics/WaveFormProcessedFiles"
 #input_path="/home2/yup1/WaveFormProcessedFiles_2_stps"
 #input_path="/opt/genomics/WaveFormProcessedFiles/codes/WaveFormProcessedFiles_2_stps"
-
+input_path="/opt/genomics/WaveFormProcessedFiles/codes/WaveFormProcessedFiles_5_stps"
 
 #output_path="/opt/genomics/WaveFormProcessedFiles/CsvOutputs"
 #output_path="/home2/yup1/CsvOutputs"
-output_path="/opt/genomics/WaveFormProcessedFiles/codes/CsvOutputs_ART_PAP"
+#output_path="/opt/genomics/WaveFormProcessedFiles/codes/CsvOutputs_ART_PAP"
+#output_path="/opt/genomics/WaveFormProcessedFiles/codes/CsvOutputs_5_stps_fix_vital_timeshift_and_inversion_pleth_10samples"
+output_path="/opt/genomics/WaveFormProcessedFiles/codes/CsvOutputs_dynamic_scales_offsets"
 
 index=0
 max_jobs=5 # the total number of jobs should NOT be less than max_jobs-1, if you have a single job, max_jobs=2, otherwise, the run will hang forever.
@@ -44,8 +49,8 @@ set -o monitor
 trap add_next_job CHLD
 # execute add_next_job when we receive a child complete signal
 
-#todo_array=($(find $input_path -name "*ENG_*-*" -type d))
-todo_array=($(find $input_path -name "*ENG_WMOR2-*" -type d))
+todo_array=($(find $input_path -name "*ENG_*-*" -type d))
+#todo_array=($(find $input_path -name "*ENG_WMOR2-*" -type d))
 
 function do_job {
     echo "starting job $1"

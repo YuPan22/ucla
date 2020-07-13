@@ -77,6 +77,8 @@ To test on lapgnomap15
 python __main__.py -input "/home2/yup1/WaveFormProcessedFiles/CLIN_ENG_WMOR8/CLIN_ENG_WMOR8-1563486442/ADIBIN" -output "/opt/genomics/WaveFormProcessedFiles/CsvOutputs" -type "toCsv" -bp "/home2/yup1/binfilepy_git"  
 python __main__.py -input "/opt/genomics/WaveFormProcessedFiles/CLIN_ENG_WMOR2" -output "/opt/genomics/WaveFormProcessedFiles/CsvOutputs_ART_PAP" -type "toCsv" -bp "/opt/genomics/WaveFormProcessedFiles/codes/binfilepy_git"
 
+python __main__.py -input "/opt/genomics/WaveFormProcessedFiles/codes/WaveFormProcessedFiles_test" -output "/opt/genomics/WaveFormProcessedFiles/codes/CsvOutputs_test" -type "toCsv" -bp "/opt/genomics/WaveFormProcessedFiles/codes/binfilepy_git"
+
 python __main__.py -input "/home2/yup1/WaveFormProcessedFiles/CLIN_ENG_WMOR8/CLIN_ENG_WMOR8-1563486442/XML" -output "/opt/genomics/WaveFormProcessedFiles/CsvOutputs" -type "deidXml"   
 
 ## 6. parallel computing in linux vm  

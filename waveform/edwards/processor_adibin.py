@@ -12,7 +12,12 @@ import sys
 #from binfilepy import binfile
 
 from deidentify.deidentifier import Deidentifier
-from to_csv.single_file_processor import SingleFileProcessor
+from edwards.single_file_processor import SingleFileProcessor
+
+import os
+from pathlib import Path
+from pathlib import PurePath
+import glob
 
 class ProcessorAdibin(SingleFileProcessor):
 
@@ -20,15 +25,51 @@ class ProcessorAdibin(SingleFileProcessor):
         super().__init__(dob, mask, debug_yn)
         self.binfilepy_path = binfilepy_path
 
+    def scan_xml(self, xml_input_file, channel):
+        scale = 1
+        offset = 0
+        with open(xml_input_file) as src:
+            line = src.readline()
+            while line: #<WaveformData ID="150452" Label="Pleth" UOM="Uncalib" Cal="NaN,NaN,1024,3072" SampleRate="128" SamplePeriodInMsec="1024"
+                if f'Label="{channel}"' in line:
+                    cal_low, cal_high, grid_low, grid_high = line.split('Cal="')[1].split('"')[0].split(',')
+                    if cal_low.lower().strip() == "nan":
+                        scale = 0.025
+                    else:
+                        scale = (int(cal_high) - int(cal_low)) / (int(grid_high) - int(grid_low))
+                    offset = int(grid_low)
+                    return (scale, offset)
+                line = src.readline()
+        return (scale, offset)
+
     def read_binfile(self, input_file):
         sys.path.append(path.abspath(self.binfilepy_path))
         from binfilepy import binfile
 
+        scales_offsets = []
         with binfile.BinFile(input_file, "r") as f:
             # You must read header first before you can read channel deidentify
             f.readHeader()
+
+            #'''
+            #start_scan_xml = time.time()
+            xml_input_file_path = str(PurePath(Path(input_file).parent.parent, "XML", "*.xml"))
+            print(f'xml_input_file_path: {xml_input_file_path}')
+            for fii in np.arange(len(f.channels)):
+                print(f.channels[fii].Title)
+                for xml_input_file in glob.iglob(xml_input_file_path, recursive=True):
+                    if os.path.isfile(xml_input_file):
+                        scale, offset = self.scan_xml(xml_input_file, f.channels[fii].Title)
+                        if scale != 1:
+                            scales_offsets.append((scale, offset))
+                            break
+            #end_scan_xml = time.time()
+            #print(f'scales_offsets: {scales_offsets}, scan_xml runtime: {end_scan_xml - start_scan_xml}')
+            #'''
+
             # I want to read the entire file
-            data = f.readChannelData(offset=0, length=0, useSecForOffset=False, useSecForLength=False)
+            #data = f.readChannelData(offset=0, length=0, useSecForOffset=False, useSecForLength=False)
+            data = f.readChannelData(scales_offsets, offset=0, length=0, useSecForOffset=False, useSecForLength=False)
 
         logging.debug(f"Dataformat: {f.header.DataFormat}")
         logging.debug(f"Seconds per tick: {f.header.secsPerTick}")  # sampling rate 300 Hz

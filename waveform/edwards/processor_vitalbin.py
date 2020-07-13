@@ -27,7 +27,7 @@ import datetime
 
 from vitalfilepy import VitalFile
 from deidentify.deidentifier import Deidentifier
-from to_csv.single_file_processor import SingleFileProcessor
+from edwards.single_file_processor import SingleFileProcessor
 
 
 
@@ -88,7 +88,6 @@ class ProcessorVitalbin(SingleFileProcessor):
         uom = ''
         with VitalFile(input_file, "r") as f:
             f.readHeader()
-            # print(f.header.__dict__)
             # {'Label': 'ECT', 'Uom': '', 'Unit': '6N', 'Bed': 'W664', 'Year': 0, 'Month': 0, 'Day': 0, 'Hour': 0, 'Minute': 0, 'Second': 0.0}
             uom = f.header.__dict__.get('Uom','')
             logging.debug(f"uom: {uom}")

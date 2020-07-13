@@ -176,7 +176,6 @@ class BinFile:
             buf = self.f.read(32)
             uom = buf.decode("utf-8").rstrip('\0')
             scale, offset, rangeHigh, rangeLow = struct.unpack("dddd", self.f.read(constant.DOUBLE_SIZE * 4))
-            print("$$$$$$$$$$$$$$ scale: "+str(scale)+", offset: "+str(offset))
             channel = CFWBCHANNEL(label, uom, scale, offset, rangeHigh, rangeLow)
             self.channels.append(channel)
 
@@ -208,7 +207,8 @@ class BinFile:
                 self.f.write(struct.pack("d", channel.RangeHigh))
                 self.f.write(struct.pack("d", channel.RangeLow))
 
-    def readChannelData(self, offset: float, length: float, useSecForOffset: bool, useSecForLength: bool, downSamplingRatio: float = 1.0):
+    def readChannelData(self, scales_offsets, offset: float, length: float, useSecForOffset: bool, useSecForLength: bool, downSamplingRatio: float = 1.0):
+    #def readChannelData(self, offset: float, length: float, useSecForOffset: bool, useSecForLength: bool, downSamplingRatio: float = 1.0):
         print("/////////////// Using local binfilepy with customized scale formula with CO2 fix///////////////")
         offsetSampleNum = int(offset / self.header.secsPerTick) if useSecForOffset else int(offset)
         lengthSampleNum = int(length / self.header.secsPerTick) if useSecForLength else int(length)
@@ -235,6 +235,8 @@ class BinFile:
         for x in range(0, lengthSampleNum):
             i = 0
             for c in channelArr:
+                #if x == 0:
+                #    print(self.channels[i].scale, self.channels[i].offset, self.channels[i].Title)
                 if self.header.DataFormat == constant.FORMAT_DOUBLE:
                     c[x] = struct.unpack("h", self.f.read(constant.SHORT_SIZE))[0]
                 elif self.header.DataFormat == constant.FORMAT_FLOAT:
@@ -244,16 +246,22 @@ class BinFile:
                     if v in constant.GAP_SHORT_VALUES:
                         c[x] = constant.MIN_DOUBLE_VALUE
                     else:
+                        '''
                         #print("/////////////// Using local binfilepy with customized scale formula and CO2 fix, self.channels[i].scale: "+str(self.channels[i].scale)+", self.channels[i].offset: "+str(self.channels[i].offset)+", v: "+str(v))
                         #c[x] = self.channels[i].scale * (v + self.channels[i].offset)
                         scale = self.channels[i].scale
                         offset = self.channels[i].offset
                         if self.channels[i].scale == 1.0 and self.channels[i].offset == 0.0:
                             scale = 0.0205
-                            offset = 588
+                            offset = 588 
                         #c[x] = 0 + self.channels[i].scale * (self.channels[i].offset - v)
-                        c[x] = 0 + scale * (v - offset)
-                        #print(f"channels[{i}].scale: {self.channels[i].scale}, channel.offset: {self.channels[i].offset}, scale: {scale}, offset: {offset}, v: {v}, c[x]: {c[x]}")
+                        '''
+                        
+                        scale, offset = scales_offsets[i]
+                        #print(scale, offset, self.channels[i].Title)
+
+                        c[x] = 0 + abs(scale) * (v - offset)
+                        #print(f"channels[{i}].scale: {self.channels[i].scale}, channel.offset: {self.channels[i].offset}, scale: {scale}, offset: {offset}, v: {v}, c[x]: {c[x]}") 
                 i += 1
         return channelArr
 
