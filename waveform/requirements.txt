@@ -1,5 +1,5 @@
 pandas==0.25.3
-numpy==1.17.4
+numpy==1.22.0
 pytest==5.3.2
 vitalfilepy==0.1.2
 #binfilepy==0.1.7
